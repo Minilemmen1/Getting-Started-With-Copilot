@@ -32,7 +32,7 @@ document.addEventListener("DOMContentLoaded", () => {
             </div>
           `;
         } else {
-          participantsHTML = `<div class="participants-section"><strong>Participants:</strong> <span class="no-participants">No one signed up yet</span></div>`;
+          participantsHTML = `<div class="participants-section"><strong>Participants:</strong> <span class="no-participants">No one signed up yet.</span></div>`;
         }
 
         activityCard.innerHTML = `

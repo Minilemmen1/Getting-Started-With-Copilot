@@ -4,6 +4,42 @@ document.addEventListener("DOMContentLoaded", () => {
   const signupForm = document.getElementById("signup-form");
   const messageDiv = document.getElementById("message");
 
+  // List of activities (add more activities here)
+  const activities = [
+    'Chess Club',
+    'Robotics Team',
+    'Drama Society',
+    'Mathletes',
+    'Science Olympiad',
+    'Debate Club',
+    'Art Club',
+    'Music Band',
+    'Environmental Club',
+    'Coding Club',
+    'Basketball',
+    'Soccer',
+    'Track & Field',
+    'Photography Club',
+    'Literature Circle'
+  ];
+
+  // Store registered users to prevent duplicate signups
+  const registrations = [];
+
+  function loadActivities() {
+    activitiesList.innerHTML = '';
+    activities.forEach(activity => {
+      const div = document.createElement('div');
+      div.textContent = activity;
+      activitiesList.appendChild(div);
+      // Add to select dropdown
+      const option = document.createElement('option');
+      option.value = activity;
+      option.textContent = activity;
+      activitySelect.appendChild(option);
+    });
+  }
+
   // Function to fetch activities from API
   async function fetchActivities() {
     try {
@@ -57,12 +93,44 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
+  function validateEmail(email) {
+
+    // Simple email regex for validation
+    return /^[^@\s]+@mergington\.edu$/.test(email);
+  }
+
+  function showMessage(msg, isError = false) {
+    messageDiv.textContent = msg;
+    messageDiv.className = isError ? 'error' : 'success';
+    messageDiv.classList.remove('hidden');
+    setTimeout(() => messageDiv.classList.add('hidden'), 4000);
+  }
+
   // Handle form submission
   signupForm.addEventListener("submit", async (event) => {
     event.preventDefault();
 
     const email = document.getElementById("email").value;
     const activity = document.getElementById("activity").value;
+
+    // Validation
+    if (!validateEmail(email)) {
+      showMessage('Please enter a valid @mergington.edu email address.', true);
+      return;
+    }
+    if (!activity) {
+      showMessage('Please select an activity.', true);
+      return;
+    }
+    // Prevent duplicate signups
+    if (registrations.some(r => r.email === email && r.activity === activity)) {
+      showMessage('You have already signed up for this activity.', true);
+      return;
+    }
+    // Register
+    registrations.push({ email, activity });
+    showMessage('Successfully signed up for ' + activity + '!', false);
+    signupForm.reset();
 
     try {
       const response = await fetch(
@@ -97,6 +165,8 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
+  // Initial load
+  loadActivities();
   // Initialize app
   fetchActivities();
 });
